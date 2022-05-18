@@ -1,10 +1,8 @@
-module.exports = app => {
-    return {
-        findAll: (params, callback) => {
-            return callback([
-                {title: "Buy some shoes"},
-                {title: "Fix notebook"}
-            ]);
-        }
-    }
-}
+import mongoose from 'mongoose';
+
+const TasksSchema = new mongoose.Schema({
+    id: mongoose.ObjectId,
+    title:  String,
+    done: false
+});
+module.exports = mongoose.model('Tasks', TasksSchema);
