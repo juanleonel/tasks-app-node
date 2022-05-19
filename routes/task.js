@@ -13,10 +13,12 @@ module.exports = app => {
         });
     })
     .post((req, res) => {
-        const { title, done } = req.body;
+        const { title, description, done } = req.body;
         const _tasks = new Tasks();
         _tasks.title = title;
         _tasks.done = false;
+        _tasks.description = description;
+        _tasks.created_at = new Date();
         _tasks.save((err, taskStored) => {
             if(err) return res.status(500),send({message: 'Error al guardar la tarea'});
 
