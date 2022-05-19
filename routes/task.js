@@ -3,10 +3,6 @@ import Tasks from '../models/tasks';
 module.exports = app => {
 
     app.route('/tasks')
-    .all((req, res) => {
-      delete req.body.id;
-      next();
-    })
     .get((req, res) => {
         Tasks.find({})
         .exec((err, tasks) => {
@@ -15,18 +11,6 @@ module.exports = app => {
                 tasks
             });
         });
-    })
-    .post((req, res) => {
-        // save tasks
-    })
-
-    app.route('tasks/:id')
-    .all((req, res) => {
-        delete req.body.id;
-        next();
-    })
-    .get((req, res) => {
-        
     })
     .post((req, res) => {
         const { title, done } = req.body;
@@ -40,7 +24,28 @@ module.exports = app => {
 
             return res.status(202).send({message: 'Ok', item: taskStored})
         })
+    });
+
+    app.route('tasks/:id')
+    .all((req, res, next) => {
+        if (req.body) delete req.body.id;
+
+        next();
     })
+    .get((req, res) => {
+        const { id } = req.params.id;
+        Tasks.findById(id, (err, taskFinded) => {
+            if(err) return res.status(500).send({message:"Not found"});
+
+            if(!taskFinded) return res.status(404).send({message:"La tarea no existe"});
+
+            return res.status(200).send({
+                msg: 'ok',
+                item: taskFinded
+            });
+        });
+    })
+    
     .delete((req, res) => {
         
     })
