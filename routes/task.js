@@ -3,6 +3,7 @@ import Tasks from '../models/tasks';
 module.exports = app => {
 
     app.route('/tasks')
+    .all(app.libs.auth.authenticate())
     .get((req, res) => {
         Tasks.find({})
         .exec((err, tasks) => {
@@ -29,11 +30,7 @@ module.exports = app => {
     });
 
     app.route('tasks/:id')
-    .all((req, res, next) => {
-        if (req.body) delete req.body.id;
-
-        next();
-    })
+    .all(app.libs.auth.authenticate())
     .get((req, res) => {
         const { id } = req.params.id;
         Tasks.findById(id, (err, taskFinded) => {
@@ -47,7 +44,6 @@ module.exports = app => {
             });
         });
     })
-    
     .delete((req, res) => {
         
     })
