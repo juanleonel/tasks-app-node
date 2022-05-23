@@ -1,18 +1,16 @@
-import jwt from "jwt-simple";
-import Users  from '../models/users';
-import bcrypt from "bcrypt";
+const jwt = require('jwt-simple');
+const Users = require('../models/users');
+const bcrypt = require('bcrypt');
 
 module.exports = app => {
     const cfg = app.libs.configs;
 
-    app.post('/token', async (req, res) => {
+    app.post('/auth', async (req, res) => {
         try {
             if (req.body.password && req.body.email) {
                 const email = req.body.email;
                 const password = req.body.password;
-    
                 const result = await Users.findOne({ email: email }).exec();
-                
                 if (bcrypt.compareSync(password, result.password)) {
                     const payload = { id: result.id };
                     res.json({

@@ -1,7 +1,5 @@
-import Tasks from '../models/tasks';
-
+const Tasks = require('../models/tasks');
 module.exports = app => {
-
     app.route('/tasks')
     .all(app.libs.auth.authenticate())
     .get((req, res) => {
@@ -44,7 +42,25 @@ module.exports = app => {
             });
         });
     })
+    .put(async(req, res) => {
+        const { id } = req.params.id;
+        const { title, description, done } = req.body;
+        const task = new Tasks();
+        task.title =  title;
+        task.description = description;
+        task.done = done;
+        Tasks.findByIdAndUpdate(id, task, {new: true}, (err, taskUpdated) => {
+            if(err) return res.status(500).send({message:"Error al actualizar"});
+            if(!taskUpdated) return res.status(404).send({message:"No se ha podido actualizar el proyecto"});
+            return res.status(200).send({ tiem: taskUpdated });
+        });
+    })
     .delete((req, res) => {
-        
+        let id = req.pa<rams.id;
+        Tasks.findByIdAndRemove(id, (err, taskDeleted)=>{
+            if(err) return res.status(500).send({message:"Error al eliminar"});
+            if(!taskDeleted) return res.status(404).send({message:"No se ha podido elminar tarea"});
+            return res.status(200).send({item:taskDeleted,message:"tarea eliminado!"});
+        });
     })
 }

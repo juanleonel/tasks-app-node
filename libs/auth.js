@@ -1,16 +1,15 @@
-import Users from  '../models/users';
-
-import passport from 'passport';
-import { Strategy, ExtractJwt } from 'passport-jwt';
+const Users = require('../models/users');
+const passport = require('passport');
+const passportJWT = require('passport-jwt');
+const Strategy = passportJWT.Strategy;
+const ExtractJwt = passportJWT.ExtractJwt;
 
 module.exports = app => {
     const cfg = app.libs.configs;
-    
     const params = {
         secretOrKey: cfg.jwtSecret,
         jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("jwt") //ExtractJwt.fromAuthHeader()
     };
-
     const strategy = new Strategy(params, (payload, done) => {
         const { id } = payload.id;
         Users.findById(id, (err, user) => {
@@ -23,7 +22,6 @@ module.exports = app => {
             if (err || !user) done(null, false);
         });
     });
-
     passport.use(strategy);
     return {
         initialize: () => {

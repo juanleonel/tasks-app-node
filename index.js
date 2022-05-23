@@ -1,12 +1,7 @@
-import express from 'express';
-import consign from "consign";
-// import mongose from 'mongoose';
+const express = require('express');
+const consign = require('consign');
 
-const PORT = 3000;
 const app =  express();
-
-// app.mongoose = mongose;
-
 
 consign()
     .include("libs/configs.js")
