@@ -6,7 +6,7 @@ module.exports = app => {
     app.route('/user')
     .get( async (req, res) => {
         try {
-            const result = await Users.find({}).exec();
+            const result = await Users.find({ enable: true }).exec();
             return res.status(200).send({
                'item': result
             });
@@ -50,7 +50,22 @@ module.exports = app => {
         });
     })
     .put((req, res) => {
+        let id = req.params.id;
+        const { name, password, email } = req.body;
+        const user = new Users();
+        user._id = id;
+        user.name = name;
+        user.password = password;
+        user.email = email;
+        user.updated_at = new Date();
+        Users.findByIdAndUpdate(id, user, {new: true}, (err, userUpdate)=>{
+            console.log(err);
+            if(err) return res.status(500).send({message:"Error al eliminar"});
 
+            if(!userUpdate) return res.status(404).send({message:"No se ha podido elminar el usuario"});
+
+            return res.status(200).send({item:userUpdate,message:"Usuario eliminado!"});
+        });
     })
     .delete((req, res) => {
         let id = req.params.id;
